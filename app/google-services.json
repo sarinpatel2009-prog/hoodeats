@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "952663689170",
+    "project_id": "hoodeatsproject",
+    "storage_bucket": "hoodeatsproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952663689170:android:a26a9f7c4d11f2bfd6ea0b",
+        "android_client_info": {
+          "package_name": "com.sarin.hoodeats"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB52isvyqAmx79w4voBdnLW2zTwJEOzGyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
