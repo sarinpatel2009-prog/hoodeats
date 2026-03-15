@@ -15,8 +15,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HoodEats"
-            android:textSize="36sp"
+            android:text="Create Account"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="#4CAF50"
             android:layout_marginBottom="8dp"/>
@@ -24,10 +24,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share food, build community"
+            android:text="Join your community"
             android:textSize="14sp"
             android:textColor="#757575"
-            android:layout_marginBottom="48dp"/>
+            android:layout_marginBottom="32dp"/>
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Full Name"
+            android:inputType="textPersonName"
+            android:padding="16dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/etEmail"
@@ -47,23 +57,53 @@
             android:inputType="textPassword"
             android:padding="16dp"
             android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etFlat"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Flat Number (e.g., 201)"
+            android:inputType="text"
+            android:padding="16dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etBlock"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Block (e.g., A)"
+            android:inputType="text"
+            android:padding="16dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etContact"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Contact Number"
+            android:inputType="phone"
+            android:padding="16dp"
+            android:background="@android:drawable/edit_text"
             android:layout_marginBottom="24dp"/>
 
         <Button
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Login"
+            android:text="Register"
             android:textSize="16sp"
             android:backgroundTint="#4CAF50"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
         <TextView
-            android:id="@+id/tvRegister"
+            android:id="@+id/tvLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have an account? Register"
+            android:text="Already have an account? Login"
             android:textColor="#4CAF50"
             android:textSize="14sp"
             android:clickable="true"
