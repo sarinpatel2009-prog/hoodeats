@@ -54,9 +54,8 @@ public class MainActivity extends AppCompatActivity {
         // Setup button listeners
         btnRefresh.setOnClickListener(v -> loadListings());
         btnPostFood.setOnClickListener(v -> {
-            // TODO: Navigate to PostFoodActivity
-            Toast.makeText(this, "Post Food feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
+                startActivity(new Intent(this, PostFoodActivity.class));
+            });
         btnProfile.setOnClickListener(v -> {
             // TODO: Navigate to ProfileActivity
             Toast.makeText(this, "Profile feature coming soon!", Toast.LENGTH_SHORT).show();
