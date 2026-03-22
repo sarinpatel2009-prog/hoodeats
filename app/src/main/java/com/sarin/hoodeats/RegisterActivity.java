@@ -66,15 +66,20 @@ public class RegisterActivity extends AppCompatActivity {
         User newUser = new User("", name, email, flat, block, contact);
 
         userService.registerUser(email, password, newUser)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, MainActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Registration failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    btnRegister.setEnabled(true);
-                    btnRegister.setText("Register");
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        finish();
+                    } else {
+                        String errorMessage = "Registration failed";
+                        if (task.getException() != null) {
+                            errorMessage = task.getException().getMessage();
+                        }
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+                        btnRegister.setEnabled(true);
+                        btnRegister.setText("Register");
+                    }
                 });
     }
 }

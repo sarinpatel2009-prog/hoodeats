@@ -1,6 +1,7 @@
 package com.sarin.hoodeats.services;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,15 +22,36 @@ public class UserService {
 
     // REGISTER - creates auth account + saves user to Firestore
     public Task<Void> registerUser(String email, String password, User user) {
-        return auth.createUserWithEmailAndPassword(email, password)
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()) {
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
+
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(authTask -> {
+                    if (authTask.isSuccessful()) {
                         String uid = auth.getCurrentUser().getUid();
                         user.setId(uid);
-                        return db.collection(USERS_COLLECTION).document(uid).set(user);
+
+                        db.collection(USERS_COLLECTION).document(uid).set(user)
+                                .addOnCompleteListener(firestoreTask -> {
+                                    if (firestoreTask.isSuccessful()) {
+                                        taskCompletionSource.setResult(null);
+                                    } else {
+                                        taskCompletionSource.setException(
+                                                firestoreTask.getException() != null
+                                                        ? firestoreTask.getException()
+                                                        : new Exception("Failed to save user data")
+                                        );
+                                    }
+                                });
+                    } else {
+                        taskCompletionSource.setException(
+                                authTask.getException() != null
+                                        ? authTask.getException()
+                                        : new Exception("Authentication failed")
+                        );
                     }
-                    throw task.getException();
                 });
+
+        return taskCompletionSource.getTask();
     }
 
     // LOGIN
