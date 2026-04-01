@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.sarin.hoodeats.models.ListingEntity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,8 +58,16 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
             holder.tvExpiry.setText(expiryText);
         }
 
-        // TODO: Load image from URL using a library like Glide or Picasso
-        // For now, we'll leave it as placeholder
+        // Load image with Glide
+        if (listing.getImageUrl() != null && !listing.getImageUrl().isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(listing.getImageUrl())
+                    .placeholder(android.R.color.darker_gray)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(holder.ivFoodImage);
+        } else {
+            holder.ivFoodImage.setImageResource(android.R.color.darker_gray);
+        }
 
         holder.btnClaim.setOnClickListener(v -> {
             if (claimListener != null) {

@@ -30,11 +30,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Initialize services
         listingService = new ListingService();
         userService = new UserService();
-
         // Initialize views
         rvListings = findViewById(R.id.rvListings);
         tvEmptyState = findViewById(R.id.tvEmptyState);
@@ -42,15 +40,12 @@ public class MainActivity extends AppCompatActivity {
         btnPostFood = findViewById(R.id.btnPostFood);
         btnProfile = findViewById(R.id.btnProfile);
         btnLogout = findViewById(R.id.btnLogout);
-
         // Setup RecyclerView
         rvListings.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ListingAdapter(this::onClaimClick);
         rvListings.setAdapter(adapter);
-
         // Load current user
         loadCurrentUser();
-
         // Setup button listeners
         btnRefresh.setOnClickListener(v -> loadListings());
         btnPostFood.setOnClickListener(v -> {
