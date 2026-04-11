@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ListingService listingService;
     private UserService userService;
     private User currentUser;
+    private boolean isFirstLoad = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,9 +195,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Reload listings when returning to this screen
-        if (currentUser != null) {
+        // Only reload when returning from another activity (e.g. PostFoodActivity),
+        // not on first launch — onCreate already triggers loadListings via loadCurrentUser.
+        if (currentUser != null && !isFirstLoad) {
             loadListings();
         }
+        isFirstLoad = false;
     }
 }
