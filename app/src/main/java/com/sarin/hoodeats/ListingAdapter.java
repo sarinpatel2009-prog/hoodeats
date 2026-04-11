@@ -19,6 +19,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
 
     private List<ListingEntity> listings;
     private OnClaimClickListener claimListener;
+    private boolean isDonorMode = false;
 
     public interface OnClaimClickListener {
         void onClaimClick(ListingEntity listing);
@@ -31,6 +32,11 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
 
     public void setListings(List<ListingEntity> listings) {
         this.listings = listings;
+        notifyDataSetChanged();
+    }
+
+    public void setDonorMode(boolean isDonorMode) {
+        this.isDonorMode = isDonorMode;
         notifyDataSetChanged();
     }
 
@@ -69,11 +75,26 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingAdapter.ListingV
             holder.ivFoodImage.setImageResource(android.R.color.darker_gray);
         }
 
-        holder.btnClaim.setOnClickListener(v -> {
-            if (claimListener != null) {
-                claimListener.onClaimClick(listing);
+        // Show different button based on mode
+        if (isDonorMode) {
+            // DONOR MODE: Show status instead of claim button
+            if ("claimed".equals(listing.getStatus())) {
+                holder.btnClaim.setText("CLAIMED!");
+                holder.btnClaim.setEnabled(false);
+            } else {
+                holder.btnClaim.setText("Active");
+                holder.btnClaim.setEnabled(false);
             }
-        });
+        } else {
+            // RECEIVER MODE: Show claim button
+            holder.btnClaim.setText("Claim");
+            holder.btnClaim.setEnabled(true);
+            holder.btnClaim.setOnClickListener(v -> {
+                if (claimListener != null) {
+                    claimListener.onClaimClick(listing);
+                }
+            });
+        }
     }
 
     @Override

@@ -9,12 +9,13 @@ public class User {
     private String contactNumber;
     private double ledgerBalance;
     private String profileImageUrl;
+    private String userType; // "donor" or "receiver"
 
     // Required empty constructor for Firestore
     public User() {}
 
     public User(String id, String name, String email, String flatNumber,
-                String block, String contactNumber) {
+                String block, String contactNumber, String userType) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -23,6 +24,7 @@ public class User {
         this.contactNumber = contactNumber;
         this.ledgerBalance = 0.0;
         this.profileImageUrl = "";
+        this.userType = userType;
     }
 
     // Getters
@@ -34,6 +36,7 @@ public class User {
     public String getContactNumber() { return contactNumber; }
     public double getLedgerBalance() { return ledgerBalance; }
     public String getProfileImageUrl() { return profileImageUrl; }
+    public String getUserType() { return userType; }
 
     // Setters
     public void setId(String id) { this.id = id; }
@@ -44,4 +47,5 @@ public class User {
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
     public void setLedgerBalance(double ledgerBalance) { this.ledgerBalance = ledgerBalance; }
     public void setProfileImageUrl(String url) { this.profileImageUrl = url; }
+    public void setUserType(String userType) { this.userType = userType; }
 }

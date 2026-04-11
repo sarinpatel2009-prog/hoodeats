@@ -30,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         // Initialize services
         listingService = new ListingService();
         userService = new UserService();
+
         // Initialize views
         rvListings = findViewById(R.id.rvListings);
         tvEmptyState = findViewById(R.id.tvEmptyState);
@@ -40,50 +42,110 @@ public class MainActivity extends AppCompatActivity {
         btnPostFood = findViewById(R.id.btnPostFood);
         btnProfile = findViewById(R.id.btnProfile);
         btnLogout = findViewById(R.id.btnLogout);
+
         // Setup RecyclerView
         rvListings.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ListingAdapter(this::onClaimClick);
         rvListings.setAdapter(adapter);
-        // Load current user
-        loadCurrentUser();
-        // Setup button listeners
-        btnRefresh.setOnClickListener(v -> loadListings());
-        btnPostFood.setOnClickListener(v -> {
-                startActivity(new Intent(this, PostFoodActivity.class));
-            });
-        btnProfile.setOnClickListener(v -> {
-            // TODO: Navigate to ProfileActivity
-            Toast.makeText(this, "Profile feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-        btnLogout.setOnClickListener(v -> logout());
 
-        // Load listings
-        loadListings();
+        // Load current user first
+        loadCurrentUser();
+
+        // Setup button listeners
+        btnLogout.setOnClickListener(v -> logout());
     }
 
     private void loadCurrentUser() {
         userService.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     currentUser = user;
+                    if (currentUser != null) {
+                        setupUIBasedOnRole();
+                        loadListings();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error loading user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
+    private void setupUIBasedOnRole() {
+        if ("donor".equals(currentUser.getUserType())) {
+            // DONOR UI
+            btnRefresh.setText("My Listings");
+            btnRefresh.setOnClickListener(v -> loadMyListings());
+
+            btnPostFood.setVisibility(View.VISIBLE);
+            btnPostFood.setOnClickListener(v -> {
+                startActivity(new Intent(this, PostFoodActivity.class));
+            });
+
+            btnProfile.setOnClickListener(v -> {
+                Toast.makeText(this, "Profile feature coming soon!", Toast.LENGTH_SHORT).show();
+            });
+
+        } else {
+            // RECEIVER UI
+            btnRefresh.setText("Refresh");
+            btnRefresh.setOnClickListener(v -> loadAllListings());
+
+            btnPostFood.setVisibility(View.GONE); // Receivers cannot post food
+
+            btnProfile.setOnClickListener(v -> {
+                Toast.makeText(this, "Profile feature coming soon!", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
     private void loadListings() {
+        if ("donor".equals(currentUser.getUserType())) {
+            loadMyListings();
+        } else {
+            loadAllListings();
+        }
+    }
+
+    private void loadMyListings() {
         btnRefresh.setEnabled(false);
         btnRefresh.setText("Loading...");
 
-        listingService.listActiveListings()
+        listingService.getUserListings(currentUser.getId())
                 .addOnSuccessListener(listings -> {
                     if (listings.isEmpty()) {
+                        tvEmptyState.setText("You haven't posted any food yet");
                         tvEmptyState.setVisibility(View.VISIBLE);
                         rvListings.setVisibility(View.GONE);
                     } else {
                         tvEmptyState.setVisibility(View.GONE);
                         rvListings.setVisibility(View.VISIBLE);
                         adapter.setListings(listings);
+                        adapter.setDonorMode(true); // Show claimed status
+                    }
+                    btnRefresh.setEnabled(true);
+                    btnRefresh.setText("My Listings");
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error loading listings: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    btnRefresh.setEnabled(true);
+                    btnRefresh.setText("My Listings");
+                });
+    }
+
+    private void loadAllListings() {
+        btnRefresh.setEnabled(false);
+        btnRefresh.setText("Loading...");
+
+        listingService.listActiveListings()
+                .addOnSuccessListener(listings -> {
+                    if (listings.isEmpty()) {
+                        tvEmptyState.setText("No food items available");
+                        tvEmptyState.setVisibility(View.VISIBLE);
+                        rvListings.setVisibility(View.GONE);
+                    } else {
+                        tvEmptyState.setVisibility(View.GONE);
+                        rvListings.setVisibility(View.VISIBLE);
+                        adapter.setListings(listings);
+                        adapter.setDonorMode(false); // Show claim button
                     }
                     btnRefresh.setEnabled(true);
                     btnRefresh.setText("Refresh");
@@ -127,5 +189,14 @@ public class MainActivity extends AppCompatActivity {
         userService.logoutUser();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload listings when returning to this screen
+        if (currentUser != null) {
+            loadListings();
+        }
     }
 }

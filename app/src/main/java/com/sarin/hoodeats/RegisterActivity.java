@@ -16,6 +16,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView tvLogin;
     private UserService userService;
+    private String userType = "receiver"; // DEFAULT - ADD THIS LINE
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,11 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         userService = new UserService();
+
+        // GET USER TYPE FROM INTENT - ADD THESE 3 LINES
+        if (getIntent().hasExtra("userType")) {
+            userType = getIntent().getStringExtra("userType");
+        }
 
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
@@ -63,7 +69,8 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setEnabled(false);
         btnRegister.setText("Creating account...");
 
-        User newUser = new User("", name, email, flat, block, contact);
+        // PASS userType TO User CONSTRUCTOR - CHANGE THIS LINE
+        User newUser = new User("", name, email, flat, block, contact, userType);
 
         userService.registerUser(email, password, newUser)
                 .addOnCompleteListener(task -> {
